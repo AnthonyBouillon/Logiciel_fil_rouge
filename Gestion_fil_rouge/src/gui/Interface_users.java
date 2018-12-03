@@ -7,23 +7,18 @@ package gui;
 
 import java.awt.Color;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 import model.Model_product;
 import product_management.Product;
-import product_management.Product_CRUD;
 import subheading_management.Subheading;
 import subheading_management.Subheading_CRUD;
 import supplier_management.Supplier;
@@ -37,34 +32,31 @@ public class Interface_users extends javax.swing.JFrame {
 
     Model_product model_product;
     Product product;
-    Product_CRUD product_crud;
     Supplier supplier;
     Supplier_CRUD supplier_crud;
     Subheading subheading;
     Subheading_CRUD subheading_crud;
     JFileChooser chooser;
-    String button_choice;
     Border border_original;
+    String button_choice;
 
     /**
      * Creates new form Interface_users
      */
     public Interface_users() {
         initComponents();
-        setSize(966, 545);
+        setSize(966, 550);
         try {
+            // Instance des classes
             this.model_product = new Model_product();
-
             this.product = new Product();
-            this.product_crud = new Product_CRUD();
-
             this.supplier = new Supplier();
             this.supplier_crud = new Supplier_CRUD();
-
             this.subheading = new Subheading();
             this.subheading_crud = new Subheading_CRUD();
-            chooser = new JFileChooser();
-            border_original = name.getBorder();
+            this.chooser = new JFileChooser();
+            this.border_original = name.getBorder();
+            // Implémentation du model
             jTable.setModel(model_product);
         } catch (SQLException e) {
             e.getMessage();
@@ -101,12 +93,14 @@ public class Interface_users extends javax.swing.JFrame {
         quantity = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         taxe = new javax.swing.JTextField();
+        error_photo = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         combo_subheading = new javax.swing.JComboBox<>();
         combo_suppliers = new javax.swing.JComboBox<>();
         cancel = new javax.swing.JButton();
-        jLabel10 = new javax.swing.JLabel();
+        title_form = new javax.swing.JLabel();
         validate = new javax.swing.JButton();
+        error_form = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Gestion des produits");
@@ -218,19 +212,27 @@ public class Interface_users extends javax.swing.JFrame {
 
         jLabel9.setText("Tva");
 
+        error_photo.setBackground(new java.awt.Color(255, 0, 0));
+        error_photo.setForeground(new java.awt.Color(255, 0, 0));
+        error_photo.setMaximumSize(new java.awt.Dimension(10, 10));
+        error_photo.setMinimumSize(new java.awt.Dimension(5, 5));
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(photo, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(103, 103, 103)
+                        .addComponent(error_photo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(photo, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
                     .addComponent(quantity)
                     .addComponent(taxe))
                 .addContainerGap())
@@ -242,15 +244,17 @@ public class Interface_users extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(photo))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(error_photo, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(quantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(quantity)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(24, 24, 24)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(taxe)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(taxe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -281,7 +285,7 @@ public class Interface_users extends javax.swing.JFrame {
             }
         });
 
-        jLabel10.setText("------------------------------------------------------------------------------------------------------- FORMULAIRE ----------------------------------------------------------------------------------------------------------------");
+        title_form.setText("------------------------------------------------------------------------------------------------------- FORMULAIRE ----------------------------------------------------------------------------------------------------------------");
 
         validate.setText("VALIDER");
         validate.addActionListener(new java.awt.event.ActionListener() {
@@ -290,25 +294,16 @@ public class Interface_users extends javax.swing.JFrame {
             }
         });
 
+        error_form.setBackground(new java.awt.Color(255, 0, 0));
+        error_form.setForeground(new java.awt.Color(255, 0, 0));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(398, 398, 398))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 784, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(92, 92, 92))))
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(8, Short.MAX_VALUE)
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 952, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(209, 209, 209)
@@ -325,15 +320,30 @@ public class Interface_users extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(58, Short.MAX_VALUE)
+                        .addComponent(title_form, javax.swing.GroupLayout.PREFERRED_SIZE, 952, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 468, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(398, 398, 398))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 784, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(92, 92, 92))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(error_form, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(257, 257, 257))))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(10, 10, 10)
                     .addComponent(validate, javax.swing.GroupLayout.PREFERRED_SIZE, 468, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(488, Short.MAX_VALUE)))
+                    .addContainerGap(538, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -348,18 +358,20 @@ public class Interface_users extends javax.swing.JFrame {
                     .addComponent(update)
                     .addComponent(delete))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-                .addGap(15, 15, 15)
+                .addComponent(title_form, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(error_form, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(7, 7, 7)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addComponent(cancel)
                 .addContainerGap())
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                    .addContainerGap(748, Short.MAX_VALUE)
+                    .addContainerGap(780, Short.MAX_VALUE)
                     .addComponent(validate)
                     .addContainerGap()))
         );
@@ -369,111 +381,57 @@ public class Interface_users extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
-        setSize(966, 840);
+        setSize(980, 870);
         button_choice = "Ajouter";
     }//GEN-LAST:event_addActionPerformed
-
+    /**
+     * Vérifie si une ligne a été sélectionnée Puis affiche les valeurs à
+     * modifier
+     *
+     * @param evt
+     */
     private void updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateActionPerformed
-        setSize(966, 840);
         button_choice = "Modifier";
+        if (this.id_product() == -1) {
+            JOptionPane.showMessageDialog(null, "Sélectionner un produit à modifier");
+        } else {
+            setSize(980, 870);
+            // champ(liste.ligne.valeur)
+            name.setText(model_product.product_list.get(n_line_product()).getShort_description());
+            description.setText(model_product.product_list.get(n_line_product()).getLong_description());
+            price_bt.setText(Double.toString(model_product.product_list.get(n_line_product()).getPrice_bt()));
+            quantity.setText(Integer.toString(model_product.product_list.get(n_line_product()).getQuantity()));
+            taxe.setText(Double.toString(model_product.product_list.get(n_line_product()).getTaxe()));
+            combo_suppliers.setSelectedItem(model_product.product_list.get(n_line_product()).getId_supplier());
+            combo_subheading.setSelectedItem(model_product.product_list.get(n_line_product()).getId_subheading());
+            chooser.setName(model_product.product_list.get(n_line_product()).getPhoto());
+        }
     }//GEN-LAST:event_updateActionPerformed
-
+    /**
+     * Vérifie si l'identifiant du produit existe
+     * -----------------------------------------------------------------------
+     * Puis supprime la ligne dans la liste et dans la base de données
+     *
+     * @param evt
+     */
     private void deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteActionPerformed
-        product.setId(this.id_line_product());
         try {
-            model_product.delete_product(this.n_line_product(), product);
-            model_product.update_product(false, null);
+            if (this.id_product() != -1) {
+                product.setId(this.id_product());
+                model_product.delete_product(this.n_line_product(), product);
+                // false, null (actualise la liste et rien de plus)
+                model_product.update_product(false, null);
+            } else {
+                JOptionPane.showMessageDialog(null, "Sélectionner un produit à supprimer");
+            }
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
+            JOptionPane.showMessageDialog(null, "Une erreur est survenue lors de la suppression du produit");
         }
     }//GEN-LAST:event_deleteActionPerformed
 
-    private void validateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validateActionPerformed
-        // AJOUTER
-        if (button_choice.equals("Ajouter")) {
-            // Identifiant du fournisseur et de la sous rubrique
-            int id_supplier = 0;
-            int id_subheading = 0;
-            int compteur_error = 0;
-            try {
-                // <COMBOBOX> Liste de fournisseur, à la ligne sélectionner, je veux l'id
-                id_supplier = supplier_crud.read().get(combo_suppliers.getSelectedIndex()).getId();
-                id_subheading = subheading_crud.read().get(combo_subheading.getSelectedIndex()).getId();
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
-            }
-            
-            if (name.getText().equals("")) {
-                name.setBorder(BorderFactory.createLineBorder(Color.red));
-                compteur_error++;
-            } else {
-                product.setShort_description(name.getText());
-                name.setBorder(border_original);
-            }
-            
-            if (description.getText().equals("")) {
-                description.setBorder(BorderFactory.createLineBorder(Color.red));
-                compteur_error++;
-            } else {
-                product.setLong_description(description.getText());
-                description.setBorder(border_original);
-            }
-            
-            if (price_bt.getText().equals("")) {
-                price_bt.setBorder(BorderFactory.createLineBorder(Color.red));
-                compteur_error++;
-            } else {
-                product.setPrice_bt(Double.parseDouble(price_bt.getText()));
-                price_bt.setBorder(border_original);
-            }
-            
-            if (compteur_error == 0) {
-                setSize(966, 545);
-            }
-
-            
-            product.setPhoto(chooser.getSelectedFile().getName());
-            product.setQuantity(Integer.parseInt(quantity.getText()));
-            product.setTaxe(Double.parseDouble(taxe.getText()));
-            product.setId_supplier(id_supplier);
-            product.setId_subheading(id_subheading);
-            /**
-             * image test
-             */
-            System.out.println("go2");
-            try {
-                //Path currentRelativePath =;
-                String path = Paths.get("").toAbsolutePath().toString();
-                System.out.println(path);
-                System.out.println("go3");
-                int id_product = model_product.product_list.get(model_product.product_list.size() - 1).getId();
-                System.out.println(id_product);
-                id_product = id_product + 1;
-                System.out.println("go4");
-                File folder = new File(path + "\\Image\\" + Integer.toString(id_product));
-                folder.mkdirs();
-                File dst = new File(path + "\\Image\\" + id_product + "\\" + chooser.getSelectedFile().getName());
-                dst.createNewFile();
-
-            } catch (Exception ex) {
-                System.out.println("ERROR" + ex.getMessage());
-            }
-
-            try {
-                model_product.create_product(product);
-                model_product.update_product(false, null);
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
-            }
-        }
-    }//GEN-LAST:event_validateActionPerformed
-
-    private void cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelActionPerformed
-        setSize(966, 545);
-    }//GEN-LAST:event_cancelActionPerformed
-
     private void photoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_photoActionPerformed
-        // Ouvre une fenetre "parcourir"
+        // Ouvre une fenetre qui permet de parcourir l'arborescence du pc
         chooser.showOpenDialog(photo);
 
     }//GEN-LAST:event_photoActionPerformed
@@ -484,15 +442,16 @@ public class Interface_users extends javax.swing.JFrame {
      */
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         try {
-            // Rempli les sélects fournisseur
+            // Affiche la liste des fournisseurs dans la combo box
             for (Supplier list_supplier : supplier_crud.read()) {
                 combo_suppliers.addItem(list_supplier.getName());
             }
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         }
-        // Rempli les selects sous rubrique
+
         try {
+            // Affiche la liste des sous rubrique dans la combo box
             for (Subheading list_subheading : subheading_crud.read()) {
                 combo_subheading.addItem(list_subheading.getName());
             }
@@ -500,14 +459,204 @@ public class Interface_users extends javax.swing.JFrame {
             System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_formWindowOpened
+
+    private void cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelActionPerformed
+        reset_form();
+    }//GEN-LAST:event_cancelActionPerformed
+
+    private void validateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validateActionPerformed
+        // Expression régulière Alphabet + nombre + accent + espace + tiret + limite de caractère
+        Pattern PATTERN_VARCHAR = Pattern.compile("^[A-Za-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔ ÖÕÚÙÛÜÝŸÆŒ0-9-]+{1,255}$");
+        Pattern PATTERN_TEXT = Pattern.compile("^[A-Za-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕ ÚÙÛÜÝŸÆŒ0-9-]+{1,1500}$");
+        // Expression régulière nombre entier
+        Pattern PATTERN_INT = Pattern.compile("^[0-9]+$");
+        // Expression régulière nombre entier + nombre double
+        Pattern PATTERN_DOUBLE = Pattern.compile("^[0-9]+(\\.[0-9]+)?$");
+        // Vérifie si l'expression régulière est respectée
+        Matcher VALIDATE_NAME = PATTERN_VARCHAR.matcher(name.getText());
+        Matcher VALIDATE_DESCRIPTION = PATTERN_TEXT.matcher(description.getText());
+        Matcher VALIDATE_PRICEBT = PATTERN_DOUBLE.matcher(price_bt.getText());
+        Matcher VALIDATE_QUANTITY = PATTERN_INT.matcher(quantity.getText());
+        Matcher VALIDATE_TAXE = PATTERN_DOUBLE.matcher(taxe.getText());
+
+        int id_product;
+        int compteur_error = 0;
+
+        if (id_product() == -1) {
+            JOptionPane.showMessageDialog(null, "Veuillez sélectionner un produit dans la liste");
+            compteur_error++;
+        } else {
+            product.setId(id_product());
+        }
+        if (id_supplier() == -1) {
+            JOptionPane.showMessageDialog(null, "Veuillez sélectionner un fournisseur");
+            compteur_error++;
+        } else {
+            product.setId_supplier(id_supplier());
+        }
+
+        if (id_subheading() == -1) {
+            JOptionPane.showMessageDialog(null, "Veuillez sélectionner une sous-rubrique");
+            compteur_error++;
+        } else {
+            product.setId_subheading(id_subheading());
+        }
+
+        if (!VALIDATE_NAME.find()) {
+            name.setBorder(BorderFactory.createLineBorder(Color.red));
+            compteur_error++;
+        } else {
+            product.setShort_description(name.getText());
+            name.setBorder(border_original);
+        }
+
+        if (!VALIDATE_DESCRIPTION.find()) {
+            description.setBorder(BorderFactory.createLineBorder(Color.red));
+            compteur_error++;
+        } else {
+            product.setLong_description(description.getText());
+            description.setBorder(border_original);
+        }
+
+        if (!VALIDATE_PRICEBT.find()) {
+            price_bt.setBorder(BorderFactory.createLineBorder(Color.red));
+            compteur_error++;
+        } else {
+            product.setPrice_bt(Double.parseDouble(price_bt.getText()));
+            price_bt.setBorder(border_original);
+        }
+
+        if (!VALIDATE_QUANTITY.find()) {
+            quantity.setBorder(BorderFactory.createLineBorder(Color.red));
+            compteur_error++;
+        } else {
+            product.setQuantity(Integer.parseInt(quantity.getText()));
+            quantity.setBorder(border_original);
+        }
+
+        if (!VALIDATE_TAXE.find()) {
+            taxe.setBorder(BorderFactory.createLineBorder(Color.red));
+            compteur_error++;
+        } else {
+            product.setTaxe(Double.parseDouble(taxe.getText()));
+            taxe.setBorder(border_original);
+        }
+        try {
+            String extension = chooser.getSelectedFile().getName().substring(chooser.getSelectedFile().getName().lastIndexOf("."));
+            if (extension.equals(".pdf") || extension.equals(".jpeg") || extension.equals(".jpg") || extension.equals(".png")) {
+                product.setPhoto(chooser.getSelectedFile().getName());
+                error_form.setText("");
+                if (button_choice.equals("Ajouter")) {
+                    // Récupère le dernier identifiant du produit dans la liste
+                    id_product = model_product.product_list.get(model_product.product_list.size() - 1).getId();
+                    // Je rajoute +1 pour que ça corresponde à la futur ligne ajouté
+                    id_product = id_product + 1;
+                } else {
+                    id_product = id_product();
+                }
+                // Récupère le chemin absolu du projet actuel
+                String path = Paths.get("").toAbsolutePath().toString();
+                // Créer un nouveau dossier (l'identifiant du produit est le nom du dossier
+                File folder = new File(path + "\\Image\\" + Integer.toString(id_product));
+                folder.mkdirs();
+                // Ajoute le fichier dans le nouveau dossier
+                File dst = new File(path + "\\Image\\" + id_product + "\\" + chooser.getSelectedFile().getName());
+                dst.createNewFile();
+            } else {
+                error_form.setText("Formats autorisés : pdf, png, jpeg, jpg");
+                System.out.println(extension);
+            }
+        } catch (Exception e) {
+            if (button_choice.equals("Ajouter")) {
+                e.getMessage();
+                error_form.setText("Ajouter une photo");
+                compteur_error++;
+            } else if (button_choice.equals("Modifier")) {
+                product.setPhoto(chooser.getName());
+            }
+        }
+
+        if (button_choice.equals("Ajouter") && compteur_error == 0) {
+
+            try {
+                model_product.create_product(product);
+                model_product.update_product(false, null);
+                reset_form();
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+                JOptionPane.showMessageDialog(null, "Une erreur est survenue lors de l'ajout du produit");
+            }
+
+        } else if (button_choice.equals("Modifier") && compteur_error == 0) {
+            
+            try {
+                model_product.update_product(true, product);
+                reset_form();
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+                JOptionPane.showMessageDialog(null, "Une erreur est survenue lors de la modification du produit");
+            }
+            
+        }
+    }//GEN-LAST:event_validateActionPerformed
     public Integer n_line_product() {
         // Numéro de la ligne sélectionnée
         return jTable.getSelectedRow();
     }
 
-    public Integer id_line_product() {
-        // liste de produit.ligne_selectionnée.recupere_id
-        return model_product.product_list.get(jTable.getSelectedRow()).getId();
+    /**
+     * Vérifie si une ligne à été sélectionnée
+     *
+     * @return l'identifiant du produit
+     */
+    public Integer id_product() {
+        int id_product;
+        try {
+            id_product = model_product.product_list.get(jTable.getSelectedRow()).getId();
+        } catch (Exception e) {
+            id_product = -1;
+        }
+        return id_product;
+    }
+
+    public Integer id_supplier() {
+        int id_supplier;
+        try {
+            id_supplier = supplier_crud.read().get(combo_suppliers.getSelectedIndex()).getId();
+        } catch (SQLException ex) {
+            id_supplier = -1;
+        }
+        return id_supplier;
+    }
+
+    public Integer id_subheading() {
+        int id_subheading;
+        try {
+            id_subheading = subheading_crud.read().get(combo_subheading.getSelectedIndex()).getId();
+        } catch (SQLException ex) {
+            id_subheading = -1;
+        }
+        return id_subheading;
+    }
+
+    /**
+     * Redéfinie la taille de la fenêtre Réinisialise les erreurs Réinisialise
+     * les valeurs dans les champs Réinisialise la couleur des bordures
+     */
+    public void reset_form() {
+        setSize(966, 550);
+        error_form.setText("");
+        name.setText("");
+        description.setText("");
+        price_bt.setText("");
+        quantity.setText("");
+        taxe.setText("");
+        chooser.setName("");
+        name.setBorder(border_original);
+        description.setBorder(border_original);
+        price_bt.setBorder(border_original);
+        quantity.setBorder(border_original);
+        taxe.setBorder(border_original);
     }
 
     /**
@@ -560,8 +709,9 @@ public class Interface_users extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> combo_suppliers;
     private javax.swing.JButton delete;
     private javax.swing.JTextArea description;
+    private javax.swing.JLabel error_form;
+    private javax.swing.JLabel error_photo;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -571,6 +721,7 @@ public class Interface_users extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable;
@@ -579,6 +730,7 @@ public class Interface_users extends javax.swing.JFrame {
     private javax.swing.JTextField price_bt;
     private javax.swing.JTextField quantity;
     private javax.swing.JTextField taxe;
+    private javax.swing.JLabel title_form;
     private javax.swing.JButton update;
     private javax.swing.JButton validate;
     // End of variables declaration//GEN-END:variables

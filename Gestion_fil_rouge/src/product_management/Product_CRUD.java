@@ -64,7 +64,7 @@ public class Product_CRUD {
     }
 
     public void update(Product product) throws SQLException {
-        System.out.println(product.getId());
+        
         login.setRequest_p("UPDATE produit SET description_court_produit = ?, description_long_produit = ?, prix_ht_produit = ?, photo_produit = ?, quantite_produit = ?, tva = ?, id_fournisseur = ?, id_sous_rubrique = ? WHERE id_produit = ?");
         login.getRequest_p().setInt(9, product.getId());
         login.getRequest_p().setString(1, product.getShort_description());
@@ -75,9 +75,7 @@ public class Product_CRUD {
         login.getRequest_p().setDouble(6, product.getTaxe());
         login.getRequest_p().setInt(7, product.getId_supplier());
         login.getRequest_p().setInt(8, product.getId_subheading());
-        System.out.println(product.getId());
         login.getRequest_p().execute();
-
     }
 
     public void delete(Product product) throws SQLException {

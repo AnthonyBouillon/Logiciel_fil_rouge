@@ -77,8 +77,6 @@ public class Model_product extends AbstractTableModel {
      *
      * @return la liste des produits
      */
-
-
     /**
      * Supprime un client dans la liste et dans la bdd
      *
@@ -100,9 +98,9 @@ public class Model_product extends AbstractTableModel {
      * @throws SQLException
      */
     public void update_product(boolean update, Product product) throws SQLException {
-        product_list = product_crud.read();
         if (update == true) {
             product_crud.update(product);
         }
+        product_list = product_crud.read();
     }
 }
