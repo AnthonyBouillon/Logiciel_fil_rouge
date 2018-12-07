@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package product_management;
 
 import database_management.Login;
@@ -10,10 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author 80010-37-15
- */
 public class Product_CRUD {
 
     Login login;
@@ -26,6 +17,12 @@ public class Product_CRUD {
         product = new Product();
     }
 
+    /**
+     * Insert dans la base de données un nouveau produit
+     *
+     * @param product
+     * @throws SQLException
+     */
     public void create(Product product) throws SQLException {
         sql = "INSERT INTO produit"
                 + "(description_court_produit, description_long_produit, prix_ht_produit, photo_produit, quantite_produit, tva, id_fournisseur, id_sous_rubrique) "
@@ -42,9 +39,14 @@ public class Product_CRUD {
         login.getRequest_p().execute();
     }
 
+    /**
+     * Ajoute dans la liste les produits de la base de données
+     *
+     * @return @throws SQLException
+     */
     public List<Product> read() throws SQLException {
         List<Product> list_product = new ArrayList();
-        login.setRequest("SELECT * FROM produit");
+        login.setRequest("SELECT * FROM produit JOIN sous_rubrique ON produit.id_sous_rubrique = sous_rubrique.id_sous_rubrique");
         while (login.getRequest().next()) {
             // Un produit dans la liste = un objet
             product = new Product();
@@ -57,14 +59,21 @@ public class Product_CRUD {
             product.setTaxe(login.getRequest().getDouble("tva"));
             product.setId_supplier(login.getRequest().getInt("id_fournisseur"));
             product.setId_subheading(login.getRequest().getInt("id_sous_rubrique"));
+            product.setName_subheading(login.getRequest().getString("nom_sous_rubrique"));
             list_product.add(product);
         }
         return list_product;
 
     }
 
+    /**
+     * Modifie une ligne dans la base de données
+     *
+     * @param product
+     * @throws SQLException
+     */
     public void update(Product product) throws SQLException {
-        
+
         login.setRequest_p("UPDATE produit SET description_court_produit = ?, description_long_produit = ?, prix_ht_produit = ?, photo_produit = ?, quantite_produit = ?, tva = ?, id_fournisseur = ?, id_sous_rubrique = ? WHERE id_produit = ?");
         login.getRequest_p().setInt(9, product.getId());
         login.getRequest_p().setString(1, product.getShort_description());
@@ -78,6 +87,12 @@ public class Product_CRUD {
         login.getRequest_p().execute();
     }
 
+    /**
+     * Supprime un produit et ses relations
+     *
+     * @param product
+     * @throws SQLException
+     */
     public void delete(Product product) throws SQLException {
         login.setRequest_p("DELETE FROM commande_produit WHERE id_produit = ?");
         login.getRequest_p().setInt(1, product.getId());

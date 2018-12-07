@@ -7,10 +7,9 @@ package gui;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
@@ -24,11 +23,8 @@ import subheading_management.Subheading_CRUD;
 import supplier_management.Supplier;
 import supplier_management.Supplier_CRUD;
 
-/**
- *
- * @author 80010-37-15
- */
-public class Interface_users extends javax.swing.JFrame {
+
+public class Interface_product extends javax.swing.JFrame {
 
     Model_product model_product;
     Product product;
@@ -43,9 +39,8 @@ public class Interface_users extends javax.swing.JFrame {
     /**
      * Creates new form Interface_users
      */
-    public Interface_users() {
+    public Interface_product() {
         initComponents();
-        setSize(966, 550);
         try {
             // Instance des classes
             this.model_product = new Model_product();
@@ -54,13 +49,17 @@ public class Interface_users extends javax.swing.JFrame {
             this.supplier_crud = new Supplier_CRUD();
             this.subheading = new Subheading();
             this.subheading_crud = new Subheading_CRUD();
+            // Instance d'une classe qui permet à l'utilisateur de choisir un fichié
             this.chooser = new JFileChooser();
+            // Récupération de la couleur d'origine de la bordure
             this.border_original = name.getBorder();
             // Implémentation du model
             jTable.setModel(model_product);
-        } catch (SQLException e) {
-            e.getMessage();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Une erreur est survenue, l'application à des données manquant");
         }
+        // Le programme n'est pas arrêter, seul la fenetre disparait
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
     /**
@@ -104,6 +103,8 @@ public class Interface_users extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Gestion des produits");
+        setPreferredSize(new java.awt.Dimension(980, 540));
+        setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
@@ -385,8 +386,9 @@ public class Interface_users extends javax.swing.JFrame {
         button_choice = "Ajouter";
     }//GEN-LAST:event_addActionPerformed
     /**
-     * Vérifie si une ligne a été sélectionnée Puis affiche les valeurs à
-     * modifier
+     * Vérifie si l'identifiant existe
+     * -----------------------------------------------------------------------
+     * Puis affiche les valeurs à modifier
      *
      * @param evt
      */
@@ -395,16 +397,20 @@ public class Interface_users extends javax.swing.JFrame {
         if (this.id_product() == -1) {
             JOptionPane.showMessageDialog(null, "Sélectionner un produit à modifier");
         } else {
-            setSize(980, 870);
-            // champ(liste.ligne.valeur)
-            name.setText(model_product.product_list.get(n_line_product()).getShort_description());
-            description.setText(model_product.product_list.get(n_line_product()).getLong_description());
-            price_bt.setText(Double.toString(model_product.product_list.get(n_line_product()).getPrice_bt()));
-            quantity.setText(Integer.toString(model_product.product_list.get(n_line_product()).getQuantity()));
-            taxe.setText(Double.toString(model_product.product_list.get(n_line_product()).getTaxe()));
-            combo_suppliers.setSelectedItem(model_product.product_list.get(n_line_product()).getId_supplier());
-            combo_subheading.setSelectedItem(model_product.product_list.get(n_line_product()).getId_subheading());
-            chooser.setName(model_product.product_list.get(n_line_product()).getPhoto());
+            try {
+                setSize(980, 870);
+                // champ(liste.ligne.valeur)
+                name.setText(model_product.product_list().get(this.n_line_product()).getShort_description());
+                description.setText(model_product.product_list().get(this.n_line_product()).getLong_description());
+                price_bt.setText(Double.toString(model_product.product_list().get(this.n_line_product()).getPrice_bt()));
+                quantity.setText(Integer.toString(model_product.product_list().get(this.n_line_product()).getQuantity()));
+                taxe.setText(Double.toString(model_product.product_list().get(this.n_line_product()).getTaxe()));
+                combo_suppliers.setSelectedItem(model_product.product_list().get(this.n_line_product()).getId_supplier());
+                combo_subheading.setSelectedItem(model_product.product_list().get(this.n_line_product()).getId_subheading());
+                chooser.setName(model_product.product_list().get(this.n_line_product()).getPhoto());
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Une erreur est survenue, impossible d'afficher les valeurs à modifier");
+            }
         }
     }//GEN-LAST:event_updateActionPerformed
     /**
@@ -419,24 +425,35 @@ public class Interface_users extends javax.swing.JFrame {
             if (this.id_product() != -1) {
                 product.setId(this.id_product());
                 model_product.delete_product(this.n_line_product(), product);
-                // false, null (actualise la liste et rien de plus)
-                model_product.update_product(false, null);
             } else {
                 JOptionPane.showMessageDialog(null, "Sélectionner un produit à supprimer");
             }
-        } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Une erreur est survenue lors de la suppression du produit");
         }
     }//GEN-LAST:event_deleteActionPerformed
-
+    /**
+     * Récupère le chemin ainsi que le nom de l'image existant dans la base de
+     * données
+     *
+     * @param evt
+     */
     private void photoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_photoActionPerformed
         // Ouvre une fenetre qui permet de parcourir l'arborescence du pc
         chooser.showOpenDialog(photo);
-
+        try {
+            if (button_choice.equals("Modifier")) {
+                chooser.setName(model_product.product_list().get(this.n_line_product()).getPhoto());
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            JOptionPane.showMessageDialog(null, "Une erreur est survenue, impossible de récupérer le chemin de l'image dans la base de données" + '\n' + "Veuillez en choisir une nouvelle");
+        }
     }//GEN-LAST:event_photoActionPerformed
     /**
      * Méthode exécutant dès l'ouverture de l'application
+     * ---------------------------------------------------------------------
+     * Affiche les fournisseurs et les sous-rubriques dans les combobox
      *
      * @param evt
      */
@@ -446,60 +463,79 @@ public class Interface_users extends javax.swing.JFrame {
             for (Supplier list_supplier : supplier_crud.read()) {
                 combo_suppliers.addItem(list_supplier.getName());
             }
-        } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Une erreur est survenue lors de l'affichage des fournisseurs");
         }
 
         try {
-            // Affiche la liste des sous rubrique dans la combo box
+            // Affiche la liste des sous rubriques dans la combo box
             for (Subheading list_subheading : subheading_crud.read()) {
                 combo_subheading.addItem(list_subheading.getName());
             }
-        } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Une erreur est survenue lors de l'affichage des sous-rubriques");
         }
     }//GEN-LAST:event_formWindowOpened
-
+    /**
+     * Met à vide les champs, les erreurs affichés et la taille de la fenetre
+     *
+     * @param evt
+     */
     private void cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelActionPerformed
-        reset_form();
+        this.reset_form();
     }//GEN-LAST:event_cancelActionPerformed
-
+    /**
+     * Toutes les vérifications se font lors de la validation du formulaire,
+     * lors de l'ajout et de la modification d'un produit.
+     *
+     * @param evt
+     */
     private void validateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validateActionPerformed
-        // Expression régulière Alphabet + nombre + accent + espace + tiret + limite de caractère
+        // Expression régulière
         Pattern PATTERN_VARCHAR = Pattern.compile("^[A-Za-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔ ÖÕÚÙÛÜÝŸÆŒ0-9-]+{1,255}$");
         Pattern PATTERN_TEXT = Pattern.compile("^[A-Za-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕ ÚÙÛÜÝŸÆŒ0-9-]+{1,1500}$");
-        // Expression régulière nombre entier
         Pattern PATTERN_INT = Pattern.compile("^[0-9]+$");
-        // Expression régulière nombre entier + nombre double
         Pattern PATTERN_DOUBLE = Pattern.compile("^[0-9]+(\\.[0-9]+)?$");
-        // Vérifie si l'expression régulière est respectée
+        // Compare l'expression régulière au texte
         Matcher VALIDATE_NAME = PATTERN_VARCHAR.matcher(name.getText());
         Matcher VALIDATE_DESCRIPTION = PATTERN_TEXT.matcher(description.getText());
         Matcher VALIDATE_PRICEBT = PATTERN_DOUBLE.matcher(price_bt.getText());
         Matcher VALIDATE_QUANTITY = PATTERN_INT.matcher(quantity.getText());
         Matcher VALIDATE_TAXE = PATTERN_DOUBLE.matcher(taxe.getText());
 
-        int id_product;
+        int id_folder = 0;
         int compteur_error = 0;
-
-        if (id_product() == -1) {
-            JOptionPane.showMessageDialog(null, "Veuillez sélectionner un produit dans la liste");
-            compteur_error++;
-        } else {
-            product.setId(id_product());
+        // Vérifie si l'identifiant du produit existe
+        if (button_choice.equals("Modifier")) {
+            if (this.id_product() == -1) {
+                JOptionPane.showMessageDialog(null, "Veuillez sélectionner un produit dans la liste");
+                compteur_error++;
+            } else {
+                product.setId(this.id_product());
+                id_folder = id_product();
+            }
         }
-        if (id_supplier() == -1) {
+        try {
+            // Récupère le dernier identifiant du produit dans la liste + 1, afin de nommer le nouveau dossier
+            id_folder = model_product.product_list().get(model_product.product_list().size() - 1).getId();
+            id_folder = id_folder + 1;
+        } catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        // Vérification des valeurs récupèré pour l'ajout ou la modification
+        if (this.id_supplier() == -1) {
             JOptionPane.showMessageDialog(null, "Veuillez sélectionner un fournisseur");
             compteur_error++;
         } else {
-            product.setId_supplier(id_supplier());
+            product.setId_supplier(this.id_supplier());
         }
 
-        if (id_subheading() == -1) {
+        if (this.id_subheading() == -1) {
             JOptionPane.showMessageDialog(null, "Veuillez sélectionner une sous-rubrique");
             compteur_error++;
         } else {
-            product.setId_subheading(id_subheading());
+            product.setId_subheading(this.id_subheading());
         }
 
         if (!VALIDATE_NAME.find()) {
@@ -541,84 +577,99 @@ public class Interface_users extends javax.swing.JFrame {
             product.setTaxe(Double.parseDouble(taxe.getText()));
             taxe.setBorder(border_original);
         }
+
+        /**
+         * Enregistre l'image dans un dossier fraichement créé
+         * --------------------------------------------------------------------
+         * Vérification : extension de l'image
+         */
         try {
-            String extension = chooser.getSelectedFile().getName().substring(chooser.getSelectedFile().getName().lastIndexOf("."));
-            if (extension.equals(".pdf") || extension.equals(".jpeg") || extension.equals(".jpg") || extension.equals(".png")) {
-                product.setPhoto(chooser.getSelectedFile().getName());
-                error_form.setText("");
-                if (button_choice.equals("Ajouter")) {
-                    // Récupère le dernier identifiant du produit dans la liste
-                    id_product = model_product.product_list.get(model_product.product_list.size() - 1).getId();
-                    // Je rajoute +1 pour que ça corresponde à la futur ligne ajouté
-                    id_product = id_product + 1;
-                } else {
-                    id_product = id_product();
-                }
-                // Récupère le chemin absolu du projet actuel
-                String path = Paths.get("").toAbsolutePath().toString();
-                // Créer un nouveau dossier (l'identifiant du produit est le nom du dossier
-                File folder = new File(path + "\\Image\\" + Integer.toString(id_product));
-                folder.mkdirs();
-                // Ajoute le fichier dans le nouveau dossier
-                File dst = new File(path + "\\Image\\" + id_product + "\\" + chooser.getSelectedFile().getName());
-                dst.createNewFile();
-            } else {
-                error_form.setText("Formats autorisés : pdf, png, jpeg, jpg");
-                System.out.println(extension);
-            }
-        } catch (Exception e) {
-            if (button_choice.equals("Ajouter")) {
-                e.getMessage();
-                error_form.setText("Ajouter une photo");
-                compteur_error++;
-            } else if (button_choice.equals("Modifier")) {
+            if (chooser.getSelectedFile() == null && button_choice.equals("Modifier")) {
+                //System.out.println(path);
                 product.setPhoto(chooser.getName());
+                //System.out.println(product.getPhoto());
+            } else {
+                if (chooser.getSelectedFile() != null) {
+                    String extension = chooser.getSelectedFile().getName().substring(chooser.getSelectedFile().getName().lastIndexOf("."));
+                    if (extension.equals(".pdf") || extension.equals(".jpeg") || extension.equals(".jpg") || extension.equals(".png")) {
+                        String path = Paths.get("").toAbsolutePath().toString();
+                        product.setPhoto(path + "\\" + chooser.getSelectedFile().getName());
+                        error_form.setText("");
+                        // Créer un nouveau dossier (l'identifiant du produit est le nom du dossier
+                        File folder = new File(path + "\\Image\\" + Integer.toString(id_folder));
+                        folder.mkdirs();
+                        // Ajoute le fichier dans le nouveau dossier
+                        File dst = new File(path + "\\Image\\" + id_folder + "\\" + chooser.getSelectedFile().getName());
+                        dst.createNewFile();
+
+                    } else {
+                        error_form.setText("Formats autorisés : pdf, png, jpeg, jpg");
+                    }
+                } else {
+
+                    error_form.setText("Ajouter une photo");
+                    compteur_error++;
+
+                }
+
             }
+
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
         }
 
+        // --------------------Fin des vérifications---------------------------
         if (button_choice.equals("Ajouter") && compteur_error == 0) {
-
             try {
                 model_product.create_product(product);
-                model_product.update_product(false, null);
-                reset_form();
+                this.reset_form();
+
             } catch (SQLException ex) {
                 System.out.println(ex.getMessage());
                 JOptionPane.showMessageDialog(null, "Une erreur est survenue lors de l'ajout du produit");
             }
-
         } else if (button_choice.equals("Modifier") && compteur_error == 0) {
-            
             try {
-                model_product.update_product(true, product);
+                model_product.update_product(product);
                 reset_form();
             } catch (SQLException ex) {
                 System.out.println(ex.getMessage());
                 JOptionPane.showMessageDialog(null, "Une erreur est survenue lors de la modification du produit");
             }
-            
         }
     }//GEN-LAST:event_validateActionPerformed
+    /**
+     *
+     * @return le numéro de la ligne sélectionné
+     */
     public Integer n_line_product() {
-        // Numéro de la ligne sélectionnée
         return jTable.getSelectedRow();
     }
 
     /**
-     * Vérifie si une ligne à été sélectionnée
+     * Retourne l'identifiant du produit de la ligne sélectionnée,
+     * ------------------------------------------------------------------------
+     * si elle existe pas, retourne -1
      *
      * @return l'identifiant du produit
      */
     public Integer id_product() {
         int id_product;
         try {
-            id_product = model_product.product_list.get(jTable.getSelectedRow()).getId();
+            id_product = model_product.product_list().get(jTable.getSelectedRow()).getId();
         } catch (Exception e) {
             id_product = -1;
         }
         return id_product;
     }
 
+    /**
+     * Retourne l'identifiant du fournisseur qui a été sélectionnée,
+     * ------------------------------------------------------------------------
+     * si elle existe pas, retourne -1
+     *
+     * @return l'identifiant du fournisseur
+     */
     public Integer id_supplier() {
         int id_supplier;
         try {
@@ -629,6 +680,13 @@ public class Interface_users extends javax.swing.JFrame {
         return id_supplier;
     }
 
+    /**
+     * Retourne l'identifiant de la sous-rubrique qui a été sélectionnée,
+     * ------------------------------------------------------------------------
+     * si elle existe pas, retourne -1
+     *
+     * @return l'identifiant de la sous-rubrique
+     */
     public Integer id_subheading() {
         int id_subheading;
         try {
@@ -640,11 +698,16 @@ public class Interface_users extends javax.swing.JFrame {
     }
 
     /**
-     * Redéfinie la taille de la fenêtre Réinisialise les erreurs Réinisialise
-     * les valeurs dans les champs Réinisialise la couleur des bordures
+     * Redéfinie la taille de la fenêtre
+     * ------------------------------------------------------------------------
+     * Réinisialise les erreurs
+     * ------------------------------------------------------------------------
+     * Réinisialise les valeurs dans les champs
+     * ------------------------------------------------------------------------
+     * Réinisialise la couleur des bordures
      */
     public void reset_form() {
-        setSize(966, 550);
+        setSize(980, 540);
         error_form.setText("");
         name.setText("");
         description.setText("");
@@ -657,8 +720,9 @@ public class Interface_users extends javax.swing.JFrame {
         price_bt.setBorder(border_original);
         quantity.setBorder(border_original);
         taxe.setBorder(border_original);
+        chooser.setSelectedFile(null);
     }
-
+    
     /**
      * @param args the command line arguments
      */
@@ -677,27 +741,28 @@ public class Interface_users extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Interface_users.class
+            java.util.logging.Logger.getLogger(Interface_product.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Interface_users.class
+            java.util.logging.Logger.getLogger(Interface_product.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Interface_users.class
+            java.util.logging.Logger.getLogger(Interface_product.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Interface_users.class
+            java.util.logging.Logger.getLogger(Interface_product.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Interface_users().setVisible(true);
+                new Interface_product().setVisible(true);
             }
         });
     }
@@ -721,7 +786,6 @@ public class Interface_users extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable;

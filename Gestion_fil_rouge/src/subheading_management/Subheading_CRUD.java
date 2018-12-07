@@ -24,12 +24,16 @@ public class Subheading_CRUD {
         subheading = new Subheading();
     }
 
+    /**
+     * Ajoute dans la liste les données des sous-rubriques
+     *
+     * @return la liste des sous-rubriques
+     * @throws SQLException
+     */
     public List<Subheading> read() throws SQLException {
 
         List<Subheading> list_subheading = new ArrayList();
-
         login.setRequest("SELECT * FROM sous_rubrique");
-
         while (login.getRequest().next()) {
             subheading = new Subheading();
             subheading.setId(login.getRequest().getInt("id_sous_rubrique"));
@@ -37,7 +41,7 @@ public class Subheading_CRUD {
             subheading.setId_heading(login.getRequest().getInt("id_rubrique"));
             list_subheading.add(subheading);
         }
-
         return list_subheading;
+
     }
 }

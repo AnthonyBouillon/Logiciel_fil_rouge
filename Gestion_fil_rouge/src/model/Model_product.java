@@ -7,40 +7,74 @@ import javax.swing.table.AbstractTableModel;
 import product_management.Product;
 import product_management.Product_CRUD;
 
-public class Model_product extends AbstractTableModel {
+public final class Model_product extends AbstractTableModel {
 
-    // En-tête des colonnes
-    private final String[] Titles = {"Titre", "Description", "Prix", "Photo", "Quantité", "Taxe"};
-    public List<Product> product_list;
     Product_CRUD product_crud;
+    // En-tête des colonnes
+    private final String[] Titles = {"Titre", "Description", "Prix", "Photo", "Quantité", "Taxe", "Sous-rubrique"};
+    // Liste des produits
+    private List<Product> product_list;
 
     /**
-     * Constructeur Instance de deux classes Assigne la liste qui sera utilisé
-     * pour le jTable
+     * Appelle la méthode qui retourne la liste des produits
      *
      * @throws SQLException
      */
     public Model_product() throws SQLException {
         product_crud = new Product_CRUD();
         product_list = new ArrayList();
-        product_list = this.product_crud.read();
+        this.product_list();
     }
 
+    /**
+     * Assigne dans {@code product_list} la méthode {@code read()} (qui contient
+     * la liste de produits) de la classe {@code Product_CRUD}
+     *
+     * @return la liste de produits
+     * @throws SQLException
+     */
+    public List<Product> product_list() throws SQLException {
+        this.product_list = product_crud.read();
+        return this.product_list;
+    }
+
+    /**
+     * Compte le nombre de titre ce qui correspond au nombre de colonnes
+     *
+     * @return le nombre de titre
+     */
     @Override
     public int getColumnCount() {
         return Titles.length;
     }
 
+    /**
+     * Affiche les titres dans les colonnes
+     *
+     * @param column
+     * @return un tableau contenant les titres
+     */
     @Override
     public String getColumnName(int column) {
         return Titles[column];
     }
 
+    /**
+     * Permet de connaitre le nombre de ligne contenu dans la liste de produit
+     *
+     * @return la taille de la liste de produit
+     */
     @Override
     public int getRowCount() {
         return product_list.size();
     }
 
+    /**
+     * Affiche les données de la liste des produits dans le jTable
+     * @param row
+     * @param column
+     * @return les données de la liste dans les colonnes et lignes correspondantes
+     */
     @Override
     public Object getValueAt(int row, int column) {
         switch (column) {
@@ -56,13 +90,16 @@ public class Model_product extends AbstractTableModel {
                 return product_list.get(row).getQuantity();
             case 5:
                 return product_list.get(row).getTaxe();
+            case 6:
+                return product_list.get(row).getName_subheading();
             default:
                 return null;
         }
     }
 
     /**
-     * Ajoute un produit dans la liste et dans la bdd
+     * Ajoute un produit dans la liste et dans la bdd 
+     * Met également à jour la liste de produit
      *
      * @param product
      * @throws SQLException
@@ -70,15 +107,25 @@ public class Model_product extends AbstractTableModel {
     public void create_product(Product product) throws SQLException {
         fireTableRowsInserted(product_list.size() - 1, product_list.size());
         product_crud.create(product);
+        product_list = product_crud.read();
     }
 
     /**
-     * Renvoie la liste des produits
+     * Modifie un produit dans la bdd
+     * Met également à jour la liste de produit
      *
-     * @return la liste des produits
+     * @param update
+     * @param product
+     * @throws SQLException
      */
+    public void update_product(Product product) throws SQLException {
+        product_crud.update(product);
+        product_list = product_crud.read();
+    }
+
     /**
-     * Supprime un client dans la liste et dans la bdd
+     * Supprime un client dans la liste et dans la bdd 
+     * Met également à jour la liste de produit
      *
      * @param i
      * @param product
@@ -87,20 +134,7 @@ public class Model_product extends AbstractTableModel {
     public void delete_product(int i, Product product) throws SQLException {
         fireTableRowsDeleted(i, i);
         product_crud.delete(product);
-
-    }
-
-    /**
-     * Actualise la liste, et potentiellement, modifie un produit dans la bdd
-     *
-     * @param update
-     * @param product
-     * @throws SQLException
-     */
-    public void update_product(boolean update, Product product) throws SQLException {
-        if (update == true) {
-            product_crud.update(product);
-        }
         product_list = product_crud.read();
     }
+
 }

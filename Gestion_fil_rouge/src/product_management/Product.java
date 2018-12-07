@@ -1,17 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package product_management;
 
-/**
- *
- * @author 80010-37-15
- */
+
 public class Product {
 
-    // Attribut correspondant à chaque champ de la table produit
+    // Attributs correspondant à chaques champs de la table produit
     private Integer id;
     private String short_description;
     private String long_description;
@@ -21,11 +13,12 @@ public class Product {
     private Double taxe;
     private Integer id_supplier;
     private Integer id_subheading;
+    private String name_subheading;
 
     /**
      * ***********************************************************************
      */
-    // Getter et Setter //
+                            // Getter et Setter //
     /**
      * ***********************************************************************
      */
@@ -101,4 +94,11 @@ public class Product {
         this.id_subheading = id_subheading;
     }
 
+    public String getName_subheading() {
+        return name_subheading;
+    }
+
+    public void setName_subheading(String name_subheading) {
+        this.name_subheading = name_subheading;
+    }
 }

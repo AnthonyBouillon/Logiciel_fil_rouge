@@ -4,20 +4,14 @@ import java.sql.SQLException;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import org.junit.Test;
 
 import product_management.Product;
 import product_management.Product_CRUD;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-/**
- *
- * @author 80010-37-15
- */
+
 public class Test_unit {
 
     Login login;
@@ -34,7 +28,7 @@ public class Test_unit {
         }
     }
 
-  /*  @Test
+    @Test
     public void create_test() {
         product.setShort_description("Description courte");
         product.setLong_description("Description longue");
@@ -62,9 +56,10 @@ public class Test_unit {
             fail(ex.getMessage());
         }
         assertTrue(true);
-    }*/
-  /*  @Test
-    public void update_test() throws SQLException{
+    }
+
+    @Test
+    public void update_test() throws SQLException {
         product.setId(10);
         product.setShort_description("Description courte modifier");
         product.setLong_description("Description longue modifier");
@@ -75,12 +70,11 @@ public class Test_unit {
         product.setId_supplier(1);
         product.setId_subheading(1);
         product_crud.update(product);
-    }*/
-    
-   /* @Test
-    public void delete_test() throws SQLException{
+    }
+
+    @Test
+    public void delete_test() throws SQLException {
         product.setId(3);
         product_crud.delete(product);
-        
-    }*/
+    }
 }
