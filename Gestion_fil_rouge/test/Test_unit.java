@@ -11,7 +11,6 @@ import org.junit.Test;
 import product_management.Product;
 import product_management.Product_CRUD;
 
-
 public class Test_unit {
 
     Login login;
@@ -38,28 +37,33 @@ public class Test_unit {
         product.setTaxe(26.0);
         product.setId_supplier(1);
         product.setId_subheading(1);
+        boolean data_create = false;
         try {
             product_crud.create(product);
+            data_create = true;
         } catch (SQLException ex) {
             fail(ex.getMessage());
         }
-        assertTrue(true);
+        assertTrue(data_create);
     }
 
     @Test
     public void read_test() {
+        boolean data_list = false;
         try {
             for (Product list_product : product_crud.read()) {
-                System.out.println(list_product.getShort_description());
+                System.out.println(list_product.getShort_description() + " " + list_product.getLong_description() + " " + list_product.getId() + " " + list_product.getName_subheading());
+                data_list = true;
             }
         } catch (SQLException ex) {
             fail(ex.getMessage());
         }
-        assertTrue(true);
+        assertTrue(data_list);
     }
 
     @Test
     public void update_test() throws SQLException {
+        boolean data_update = false;
         product.setId(10);
         product.setShort_description("Description courte modifier");
         product.setLong_description("Description longue modifier");
@@ -69,12 +73,25 @@ public class Test_unit {
         product.setTaxe(26.0);
         product.setId_supplier(1);
         product.setId_subheading(1);
-        product_crud.update(product);
+        try {
+            product_crud.update(product);
+            data_update = true;
+        } catch (Exception ex) {
+            fail(ex.getMessage());
+        }
+        assertTrue(data_update);
     }
 
     @Test
     public void delete_test() throws SQLException {
+        boolean data_delete = false;
         product.setId(3);
-        product_crud.delete(product);
+        try {
+            product_crud.delete(product);
+            data_delete = true;
+        } catch (Exception ex) {
+            fail(ex.getMessage());
+        }
+        assertTrue(data_delete);
     }
 }

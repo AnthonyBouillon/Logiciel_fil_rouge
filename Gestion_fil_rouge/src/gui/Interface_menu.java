@@ -10,9 +10,11 @@ package gui;
  * @author 80010-37-15
  */
 public class Interface_menu extends javax.swing.JFrame {
-Interface_product interface_product;
-Interface_order interface_order;
+
+    Interface_product interface_product;
+    Interface_order interface_order;
 //Interface_orderProduct interface_orderProduct;
+
     /**
      * Creates new form Menu
      */
@@ -90,13 +92,20 @@ Interface_order interface_order;
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
     /**
-     * Fait apparaitre la fenêtre (JFrame interface_product) des gestions de produit
-     * @param evt 
+     * Fait apparaitre la fenêtre (JFrame interface_product) qui correspond à la
+     * gestion des produits
+     *
+     * @param evt
      */
     private void button_productActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_productActionPerformed
         interface_product.setVisible(true);
     }//GEN-LAST:event_button_productActionPerformed
-
+    /**
+     * Fait apparaitre la fenêtre (JFrame interface_order) qui correspond aux
+     * commandes des produits
+     *
+     * @param evt
+     */
     private void button_orderOfProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_orderOfProductActionPerformed
         interface_order.setVisible(true);
     }//GEN-LAST:event_button_orderOfProductActionPerformed

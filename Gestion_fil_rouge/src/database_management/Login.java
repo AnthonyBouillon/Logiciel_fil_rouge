@@ -6,6 +6,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Classe qui permet de se connecter à la base de données
+ *
+ * @author 80010-37-15
+ */
 public class Login {
 
     private final String url;
@@ -32,7 +37,7 @@ public class Login {
 
     /**
      * Création d'un objet requête préparer {@code prepareStatement()}.
-     * ------------------------------------------------------------------------
+     *
      * Prépare à exécuter la requête.
      *
      * @param sql
@@ -42,13 +47,19 @@ public class Login {
         request = connection.prepareStatement(sql);
     }
 
+    /**
+     * Retourne l'objet {@code PreparedStatement()}
+     *
+     * @return
+     * @throws SQLException
+     */
     public PreparedStatement getRequest_p() throws SQLException {
         return request;
     }
 
     /**
      * Création d'un objet requête {@code createStatement()}.
-     * ------------------------------------------------------------------------
+     * 
      * Renvoie le résultat de la requête {@code executeQuery(sql)}.
      *
      * @param sql
@@ -58,10 +69,21 @@ public class Login {
         result = connection.createStatement().executeQuery(sql);
     }
 
+    /**
+     * Retourne l'objet {@code ResultSet()} 
+     *
+     * @return
+     * @throws SQLException
+     */
     public ResultSet getRequest() throws SQLException {
         return result;
     }
 
+    /**
+     * Retourne l'objet {@code Connection()} 
+     *
+     * @return
+     */
     public Connection con() {
         return connection;
     }

@@ -18,9 +18,22 @@ public class Order_CRUD {
     }
 
     /**
+     * Récupère l'année des premières commandes
+     *
+     * @return @throws SQLException
+     */
+    public int min_year() throws SQLException {
+        int min_year;
+        login.setRequest("SELECT year(min(date_commande)) as \"min_year\" FROM commande;");
+        login.getRequest().next();
+        min_year = login.getRequest().getInt("min_year");
+        return min_year;
+    }
+
+    /**
      * Ajoute dans la liste les produits de la base de données
      *
-     * @param year
+     * @param year l'année sélectionnée
      * @return @throws SQLException
      */
     public List<Order> read(int year) throws SQLException {

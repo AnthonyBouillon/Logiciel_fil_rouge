@@ -6,8 +6,10 @@
 package gui;
 
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import order_management.Order;
 import order_management.Order_CRUD;
 
@@ -25,15 +27,15 @@ public class Interface_order extends javax.swing.JFrame {
      */
     public Interface_order() {
         initComponents();
-        order = new Order();
         try {
+            order = new Order();
             order_crud = new Order_CRUD();
-        } catch (SQLException ex) {
-            Logger.getLogger(Interface_order.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Une erreur est survenue l'application est indisponible !");
+            System.out.println(ex.getMessage());
         }
         // Le programme n'est pas arrêter, seul la fenetre disparait
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        //combo_box.setModel();
     }
 
     /**
@@ -102,22 +104,38 @@ public class Interface_order extends javax.swing.JFrame {
 
     private void combo_boxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_boxActionPerformed
         try {
-            String year;
-            year = (String) combo_box.getSelectedItem();
-            int year2 = Integer.parseInt(year);
-            System.out.println(year2);
-            for (Order list : order_crud.read(year2)) {
-                    text_area.setText("Référence : " + Integer.toString(list.getId_product()) + "\n" + "Nom produit : " + list.getName_product() + "\n" + "Quantité commandés : " + list.getQuantity_product() + "\n" + "Fournisseur : " + list.getName_supplier());
-                    text_area.setText(text_area.getText() + "\n" + "---------------------------------------------------" + "\n");
+            // Récupère le nom de l'item dans la combo box
+            String item = (String) combo_box.getSelectedItem();
+            // Converti le résultat en int
+            int year = Integer.parseInt(item);
+            // Boolean qui me permet de savoir si oui ou non, il trouve un résultat
+            boolean id_product = false;
+            // Affiche les commandes des produits
+            for (Order list : order_crud.read(year)) {
+                id_product = true;
+                text_area.setText("Référence : " + Integer.toString(list.getId_product()) + "\n" + "Nom produit : " + list.getName_product() + "\n" + "Quantité commandés : " + list.getQuantity_product() + "\n" + "Fournisseur : " + list.getName_supplier());
+                text_area.setText(text_area.getText() + "\n" + "---------------------------------------------------" + "\n");
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(Interface_order.class.getName()).log(Level.SEVERE, null, ex);
+            if (id_product == false) {
+                text_area.setText("");
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Veuillez sélectionner une année !");
+            System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_combo_boxActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        for (int i = 2000; i < 2019; i++) {
-            combo_box.addItem(Integer.toString(i));
+        try {
+            // Récupère la date d'aujourd'hui
+            Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            for (int i = order_crud.min_year(); i <= year; i++) {
+                combo_box.addItem(Integer.toString(i));
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Une erreur est survenue, il vous sera impossible de sélectionner une année !");
+            System.out.println(ex.getMessage());
         }
 
     }//GEN-LAST:event_formWindowOpened

@@ -20,7 +20,7 @@ public class Product_CRUD {
     /**
      * Insert dans la base de données un nouveau produit
      *
-     * @param product
+     * @param product différente valeur pour la table produit
      * @throws SQLException
      */
     public void create(Product product) throws SQLException {
@@ -69,7 +69,7 @@ public class Product_CRUD {
     /**
      * Modifie une ligne dans la base de données
      *
-     * @param product
+     * @param product différente valeur pour la table produit
      * @throws SQLException
      */
     public void update(Product product) throws SQLException {
@@ -90,7 +90,7 @@ public class Product_CRUD {
     /**
      * Supprime un produit et ses relations
      *
-     * @param product
+     * @param product différente valeur pour la table produit
      * @throws SQLException
      */
     public void delete(Product product) throws SQLException {

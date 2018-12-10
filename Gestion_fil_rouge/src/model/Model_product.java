@@ -51,7 +51,7 @@ public final class Model_product extends AbstractTableModel {
     /**
      * Affiche les titres dans les colonnes
      *
-     * @param column
+     * @param column nom des colonnes
      * @return un tableau contenant les titres
      */
     @Override
@@ -71,8 +71,8 @@ public final class Model_product extends AbstractTableModel {
 
     /**
      * Affiche les données de la liste des produits dans le jTable
-     * @param row
-     * @param column
+     * @param row nombre de ligne
+     * @param column nombre de colonne
      * @return les données de la liste dans les colonnes et lignes correspondantes
      */
     @Override
@@ -101,7 +101,7 @@ public final class Model_product extends AbstractTableModel {
      * Ajoute un produit dans la liste et dans la bdd 
      * Met également à jour la liste de produit
      *
-     * @param product
+     * @param product différentes valeurs pour la table produit
      * @throws SQLException
      */
     public void create_product(Product product) throws SQLException {
@@ -114,8 +114,7 @@ public final class Model_product extends AbstractTableModel {
      * Modifie un produit dans la bdd
      * Met également à jour la liste de produit
      *
-     * @param update
-     * @param product
+     * @param product différentes valeurs pour modifier une ligne de la table produit
      * @throws SQLException
      */
     public void update_product(Product product) throws SQLException {
@@ -127,8 +126,8 @@ public final class Model_product extends AbstractTableModel {
      * Supprime un client dans la liste et dans la bdd 
      * Met également à jour la liste de produit
      *
-     * @param i
-     * @param product
+     * @param i numéro de ligne
+     * @param product différentes valeurs pour la table produit
      * @throws SQLException
      */
     public void delete_product(int i, Product product) throws SQLException {
